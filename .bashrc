@@ -34,5 +34,3 @@ set -o vi
 
 source "/usr/share/git/completion/git-prompt.sh"
 export PS1='\[\033[34m\]┌─\[\e[0m\][\u@\h][\w][$(__git_ps1 "(%s)")]\n\[\033[34m\]└─◼ \[\e[0m\]'
-
-trap 'echo -ne "\e[0m"' DEBUG
