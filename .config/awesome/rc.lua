@@ -1,3 +1,6 @@
+-- If LuaRocks is installed load packages installed with it
+pcall(require, "luarocks.loader")
+
 -- Standard   awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -16,6 +19,8 @@ local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable VIM help for hotkeys widget when client with matching name is opened:
 require("awful.hotkeys_popup.keys.vim")
+
+naughty.config.defaults.timeout = 10
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -45,11 +50,13 @@ end
 -- {{{ Variable definitions
 
 -- This is used later as the default terminal and editor to run.
-local terminal = "termite"
-local webbrowser = "chromium"
+local terminal = "urxvt"
+local webbrowser = "firefox"
 local editor = os.getenv("EDITOR") or "nano"
 local editor_cmd = terminal .. " -e " .. editor
-local chosen_theme = "psychedelic"
+local chosen_theme = "kr"
+
+-- awful.mouse.snap.client_enabled = false
 
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. chosen_theme .. "/theme.lua")
@@ -405,18 +412,18 @@ local cpucores = 2
 --}}}
 -- --{{{ Cpu temperature widget
 local cputempwidget = wibox.widget.textbox()
-local cputemptooltip = awful.tooltip({
-  objects = {cputempwidget},
-  --shape = gears.shape.octogon,
-  timer_function = function()
-    local str = ""
-    for i=1, cpucores do
-      str = str .. "Core" .. i .. ": " .. math.tointeger(from_file('/sys/class/thermal/thermal_zone' .. i .. '/temp') / 1000) .. "°C\n"
-    end
-    return string.sub(str,1,-2)
-  end,
-  timeout = 1
-})
+-- local cputemptooltip = awful.tooltip({
+--   objects = { cputempwidget },
+--   --shape = gears.shape.octogon,
+--   timer_function = function()
+--     local str = ""
+--     for i=1, cpucores do
+--       str = str .. "Core" .. i .. ": " .. tonumber(from_file('/sys/class/thermal/thermal_zone' .. i .. '/temp') / 1000) .. "°C\n"
+--     end
+--     return string.sub(str,1,-2)
+--   end,
+--   timeout = 1
+-- })
 
 local cpu_lasttemp=0
 local cputempwidgettimer = gears.timer({ timeout=1 })
@@ -424,10 +431,11 @@ cputempwidgettimer:connect_signal("timeout", function()
 --   local request = file_read("/sys/class/thermal/thermal_zone1/temp")
   local request = file_read("/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input")
   request:connect_signal("request::completed", function(content)
-    if math.tointeger(content) == cpu_lasttemp then return; end
-    cpu_lasttemp=math.tointeger(content)
+    if tonumber(content) == cpu_lasttemp then return; end
+    cpu_lasttemp=gears.math.round(content) -- math.tointeger()
     local tempstr = ""
-    local temp = math.tointeger(content / 1000) --math.floor((tonumber(content) / 1000) + 0.5)
+    local temp = gears.math.round(content / 1000) --math.floor((tonumber(content) / 1000) + 0.5)
+--     naughty.notify({ text = tostring(temp) })
     tempstr = (temp < cpu_maxtemp) and ("🌡 " .. temp .. " °C") or ("🌡 <span color='#FF0000'>" .. temp .. "°C</span>")
     cputempwidget:set_markup(tempstr)
 --     naughty.notify({ text = "completed" })
@@ -558,7 +566,7 @@ local batterytext = wibox.widget{
   -- vertical and horizontal align to center of the arc
   align = 'center',
   valign = 'center',
-  font = "Hack 5",
+--   font = "Hack 5",
 }
 
 lowbattlevel = {}
@@ -650,7 +658,7 @@ batteryupdatetimer:connect_signal("timeout",
 end)
 
 -- Load up battery path and start all the timers for widget updates
-awful.spawn.easy_async("sh -c 'ls -d /sys/class/power_supply/BAT*'", function(stdout, stderr, reason, exit_code)
+awful.spawn.easy_async("sh -c 'ls -d /sys/class/power_supply/BAT*'", function(stdout)
   batterypath = string.sub(stdout,1,-2)
   batteryupdatetimer:emit_signal("timeout")
   batteryupdatetimer:start()
@@ -663,17 +671,17 @@ vocabwidget:connect_signal("button::press", function() awful.util.spawn_with_she
 --{{{ Music player widget
 local musicwidget = awful.widget.button({ image = "/usr/share/icons/Flattr/apps/64/google-play-music.svg" })
 -- detect cmus on startup
-awful.spawn.easy_async("pgrep cmus", function(stdout, stderr, reason, exit_code)
+awful.spawn.easy_async("pgrep cmus", function(stdout)
   if stdout ~= "" then
     musicwidgetcontrols.visible = true
-     musictracktimer:emit_signal("timeout")
+    musictracktimer:emit_signal("timeout")
     musictracktimer:start()
     musictrackscroller:continue()
   end
 end)
 
 musicwidget:connect_signal("button::press", function() 
-  awful.spawn.easy_async("pgrep cmus", function(stdout, stderr, reason, exit_code)
+  awful.spawn.easy_async("pgrep cmus", function(stdout)
     if stdout == "" then
       -- cmus not running
       awful.util.spawn_with_shell(terminal .. " -e cmus")
@@ -703,10 +711,11 @@ musicnext:connect_signal("button::press", function() awful.util.spawn_with_shell
 local musictrack = wibox.widget.textbox()
 musictracktimer = gears.timer({ timeout = 2 })
 musictracktimer:connect_signal("timeout", function()
-  awful.spawn.easy_async("cmus-remote -Q", function(stdout, stderr, reason, exitcode)
+  awful.spawn.easy_async("cmus-remote -Q", function(stdout)
       local artist = string.match(stdout, 'tag artist ([^%c]+)')
       local track = string.match(stdout, 'tag title ([^%c]+)')
       if artist == nil and track == nil then
+        -- if both artist and track name fail parsing use filename for song name
         local match = string.match(stdout, '[^/]/([^/]-)%.%a+')
         if match == nil then
           musicwidgetcontrols.visible = false
@@ -714,6 +723,8 @@ musictracktimer:connect_signal("timeout", function()
           musictrackscroller:pause()
           return
         end
+        musictrack:set_markup(match)
+        return
       end
       musictrack:set_markup(artist .. ' - ' .. track)
 --     for match in string.gmatch(stdout, '[^/]/([^/]+) ') do
@@ -744,7 +755,7 @@ musicwidgetcontrols = wibox.widget {
 local updaterstatus = wibox.widget.textbox()
 local updatetimer = gears.timer({ timeout = 10 })
 updatetimer:connect_signal("timeout", function()
-    awful.spawn.easy_async("pgrep pacaur", function(stdout, stderr, reason, exit_code)
+    awful.spawn.easy_async("pgrep pacaur", function(stdout)
       if stdout == "" then
         updaterstatus:set_markup("")
         updatetimer:stop()
@@ -854,7 +865,7 @@ awful.screen.connect_for_each_screen(function(s)
 
   -- Each screen has its own tag table.
   --, "7", "8", "9" },
-  awful.tag({ "IRC", "web", "emails", "docs", "music", "other"}, s, awful.layout.layouts[1])
+  awful.tag({ "IRC", "Web", "Emails", "Docs", "Music", "Other"}, s, awful.layout.layouts[1])
 
   -- Create a promptbox for each screen
   s.mypromptbox = awful.widget.prompt()
@@ -891,7 +902,7 @@ awful.screen.connect_for_each_screen(function(s)
       textclock,
       --widgetseparator,
       uptimewidget,
-      widgetspacer,
+--       widgetspacer,
 --       widgetseparator,
 --       gmailwidget,
 --       widgetseparator,
@@ -1029,14 +1040,16 @@ globalkeys = gears.table.join(
 
   -- My programs
   awful.key({ modkey, "Shift"   }, "a", function () awful.util.spawn_with_shell("xrandr --output LVDS1 --auto --gamma 1:1:1") end),
-  awful.key({ modkey,       }, "w", function () awful.spawn(webbrowser) end),
+  awful.key({ modkey,       }, "w", function () awful.spawn(webbrowser, { tag = mouse.screen.selected_tag }) end),
   awful.key({ modkey, "Shift"    }, "f", function () awful.util.spawn_with_shell(terminal .. " -e ranger") end),
   awful.key({ "Control",       }, "Print", nil, function () awful.util.spawn_with_shell("scrot -u -e 'mv $f ~/Pictures/Screenshots/'") end),
   awful.key({           }, "Print", nil, function () awful.util.spawn_with_shell("scrot -e 'mv $f ~/Pictures/Screenshots/'") end),
   awful.key({           }, "XF86TouchpadToggle", function () awful.util.spawn_with_shell("touchpad_toggle") end),
   awful.key({ modkey,       }, "F2" , function ()
     --awful.util.spawn("i3lock-fancy -- scrot")
-    awful.util.spawn_with_shell("xset s activate")
+--     awful.util.spawn_with_shell("xset s activate")
+    awful.spawn("light-locker-command -l")
+--     awful.util.spawn_with_shell("dbus-send --type=method_call --dest=org.gnome.ScreenSaver /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock")
   end),
   --awful.key({ modkey,       }, "F2" , function () awful.util.spawn_with_shell("i3lock-fancy -- scrot") end),
   --awful.key({ modkey,       }, "F2" , function () awful.util.spawn_with_shell("pkill compton || compton --force-win-blend") end),
@@ -1213,7 +1226,7 @@ awful.rules.rules = {
                    buttons = clientbuttons,
                    screen = awful.screen.preferred,
                    placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-                   size_hints_honor = true,
+                   size_hints_honor = false,
 --                  shape_bounding=gears.shape.rounded_rect,
 --                  shape_clip=gears.shape.rounded_rect
    }
@@ -1239,6 +1252,7 @@ awful.rules.rules = {
 
     name = {
       "Event Tester",  -- xev.
+      "Emoji Choice", -- Ibus emoji choose window
     },
     role = {
       "AlarmWindow",  -- Thunderbird's calendar.
@@ -1253,10 +1267,12 @@ awful.rules.rules = {
   { rule_any = { class = { "mpv" }
   }, properties = { border_width = 0 } },
   { rule_any = { class = { "/usr/lib/firefox/plugin-container" }
-  }, properties = { floating = true}},
+  }, properties = { floating = true } },
+  { rule_any = { class = { "geary", "Geary" }
+  }, properties = { tag = "Emails" } },
   -- Set Firefox to always map on the tag named "2" on screen 1.
-  -- { rule = { class = "Firefox" },
-  --   properties = { screen = 1, tag = "2" } },
+--   { rule = { class = "Firefox" },
+--     properties = { tag = mouse.screen.selected_tag } },
 }
 -- }}}
 
@@ -1341,20 +1357,24 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 --{{{ Daemons and programs startup
-awful.util.spawn("fcitx")
-awful.util.spawn("run-once xss-lock -- i3lock-fancy -f /usr/share/fonts/TTF/AURORABC.TTF")
--- awful.util.spawn("run-once redshift-gtk")
-awful.util.spawn("run-once volumeicon")
--- awful.util.spawn("blueman-applet")
+-- awful.spawn("gnome-session")
+awful.spawn("fcitx")
+-- awful.spawn("run-once xss-lock -- i3lock-fancy -f /usr/share/fonts/TTF/AURORABC.TTF")
+awful.spawn("run-once light-locker")
+-- awful.spawn("run-once redshift-gtk")
+awful.spawn("run-once volumeicon")
+awful.spawn("blueman-applet")
 -- awful.util.spawn("run-once xss-lock -- i3lock -n -i /home/vitis/.lock.png")
 -- awful.util.spawn("run-once i3lock-fancy -- scrot")
--- awful.util.spawn("run-once nm-applet")
-awful.util.spawn("run-once connman-gtk")
+awful.spawn("run-once nm-applet")
+-- awful.spawn("run-once connman-gtk")
 -- awful.util.spawn("ibus-daemon -xrd")
--- awful.util.spawn("run-once pcmanfm -d")
-awful.util.spawn("libinput-gestures-setup start")
+awful.spawn("run-once pcmanfm -d")
+awful.spawn("libinput-gestures-setup start")
 -- awful.util.spawn("telegram-desktop")
 -- awful.util.spawn("skypeforlinux")
--- awful.spawn("compton")
+-- awful.spawn("geary")
+-- awful.util.spawn_with_shell("run-once ~/.config/i3/gmail.sh")
+awful.spawn("run-once compton")
 -- awful.spawn("xcompmgr")
 --}}}
