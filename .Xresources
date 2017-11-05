@@ -95,12 +95,14 @@ xterm.font: xft:Hack:Regular:size=7,antialias=true,\
 ! Xcursor.theme: Red-Dot
 ! Xcursor.theme: NeoAlien-dark
 ! Xcursor.theme: Oxygen Zion
-! Xcursor.theme: ATER-yellow
+Xcursor.theme: ATER-yellow
 ! Xcursor.theme: Neutral
 ! Xcursor.theme: deepin
 ! Xcursor.theme: Pulse-Glass
 ! Xcursor.theme: handhelds
-Xcursor.theme: Numix
+! Xcursor.theme: Numix
+
+! Xcursor.size: 16
 
 ! FONTS
 ! urxvt*font: xft:gohufont:size=7:antialias=true,\

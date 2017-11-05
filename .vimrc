@@ -1,4 +1,4 @@
-" set number
+set number
 set relativenumber
 set showcmd
 set wildmenu
@@ -6,7 +6,7 @@ set expandtab
 set smartindent
 set smarttab
 set nowrap
-" set tw=80 " document width
+set tw=80 " document width
 set ai
 set lazyredraw " redraw only when needed
 set showmatch " highlight matching braces
@@ -91,6 +91,7 @@ set nocompatible
 set encoding=utf8
 " setlocal foldmethod=syntax
 set foldmethod=marker
+colorscheme mushroom
 " colorscheme default
 " colorscheme vim-distinguished
 autocmd BufWinLeave *.* mkview

@@ -20,8 +20,6 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 -- Enable VIM help for hotkeys widget when client with matching name is opened:
 require("awful.hotkeys_popup.keys.vim")
 
-naughty.config.defaults.timeout = 10
-
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -50,13 +48,17 @@ end
 -- {{{ Variable definitions
 
 -- This is used later as the default terminal and editor to run.
-local terminal = "urxvt"
+local terminal = "termite"
 local webbrowser = "firefox"
 local editor = os.getenv("EDITOR") or "nano"
 local editor_cmd = terminal .. " -e " .. editor
-local chosen_theme = "kr"
+local chosen_theme = "green"
 
--- awful.mouse.snap.client_enabled = false
+awful.mouse.snap.client_enabled = false
+awful.mouse.snap.edge_enabled = false
+-- awful.mouse.snap.default_distance = 5
+-- awful.mouse.snap = false
+naughty.config.defaults.timeout = 10
 
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. chosen_theme .. "/theme.lua")
@@ -220,8 +222,7 @@ local clocktooltip = awful.tooltip({
   timeout = 60, 
   objects = {textclock},
   timer_function = function()
-    local command = 'TZ=\'Asia/Seoul\' date +"%a %b %d, %H:%M"'
-    return "KST: " .. string.sub(from_command(command), 1, -2)
+    return "KST: " .. os.date("!%a %b %d %H:%M", os.time() + 9*3600)
   end
 })
 
@@ -398,20 +399,20 @@ local uptimewidget = awful.widget.watch("uptime -p", 60)
 --}}}
 -- --{{{ Cpu widgets
 --{{{ Cpu widgets variables initialization
-local cpu_maxtemp=70
-local cpufreqcounter = 0
-local cpufreqarr = {}
-local freqarrsize=1
--- Initial value later updated with actual corecount
-local cpucores = 2
-
---save 20 samples per each core
--- set array size and fill the array so that calculation of frequency doesn't
--- fail on nil value
+-- local cpu_maxtemp=70
+-- local cpufreqcounter = 0
+-- local cpufreqarr = {}
+-- local freqarrsize=1
+-- -- Initial value later updated with actual corecount
+-- local cpucores = 2
+-- 
+-- --save 20 samples per each core
+-- -- set array size and fill the array so that calculation of frequency doesn't
+-- -- fail on nil value
 
 --}}}
 -- --{{{ Cpu temperature widget
-local cputempwidget = wibox.widget.textbox()
+-- local cputempwidget = wibox.widget.textbox()
 -- local cputemptooltip = awful.tooltip({
 --   objects = { cputempwidget },
 --   --shape = gears.shape.octogon,
@@ -424,28 +425,28 @@ local cputempwidget = wibox.widget.textbox()
 --   end,
 --   timeout = 1
 -- })
-
-local cpu_lasttemp=0
-local cputempwidgettimer = gears.timer({ timeout=1 })
-cputempwidgettimer:connect_signal("timeout", function()
---   local request = file_read("/sys/class/thermal/thermal_zone1/temp")
-  local request = file_read("/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input")
-  request:connect_signal("request::completed", function(content)
-    if tonumber(content) == cpu_lasttemp then return; end
-    cpu_lasttemp=gears.math.round(content) -- math.tointeger()
-    local tempstr = ""
-    local temp = gears.math.round(content / 1000) --math.floor((tonumber(content) / 1000) + 0.5)
---     naughty.notify({ text = tostring(temp) })
-    tempstr = (temp < cpu_maxtemp) and ("🌡 " .. temp .. " °C") or ("🌡 <span color='#FF0000'>" .. temp .. "°C</span>")
-    cputempwidget:set_markup(tempstr)
---     naughty.notify({ text = "completed" })
-  end)
-end)
---   cputempwidget:set_markup(cputemp()) end)
-cputempwidgettimer:emit_signal("timeout")
-cputempwidgettimer:start()
--- --}}}
--- --{{{ Cpu frequency widget
+-- 
+-- local cpu_lasttemp=0
+-- local cputempwidgettimer = gears.timer({ timeout=1 })
+-- cputempwidgettimer:connect_signal("timeout", function()
+-- --   local request = file_read("/sys/class/thermal/thermal_zone1/temp")
+--   local request = file_read("/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input")
+--   request:connect_signal("request::completed", function(content)
+--     if tonumber(content) == cpu_lasttemp then return; end
+--     cpu_lasttemp=gears.math.round(content) -- math.tointeger()
+--     local tempstr = ""
+--     local temp = gears.math.round(content / 1000) --math.floor((tonumber(content) / 1000) + 0.5)
+-- --     naughty.notify({ text = tostring(temp) })
+--     tempstr = (temp < cpu_maxtemp) and ("🌡 " .. temp .. " °C") or ("🌡 <span color='#FF0000'>" .. temp .. "°C</span>")
+--     cputempwidget:set_markup(tempstr)
+-- --     naughty.notify({ text = "completed" })
+--   end)
+-- end)
+-- --   cputempwidget:set_markup(cputemp()) end)
+-- cputempwidgettimer:emit_signal("timeout")
+-- cputempwidgettimer:start()
+--}}}
+--{{{ Cpu frequency widget
 -- local function cpufreq(core, i)
 --   -- Frequency in MHz
 --   local request = file_read("/sys/devices/system/cpu/cpufreq/policy" .. core .. "/scaling_cur_freq")
@@ -519,35 +520,53 @@ cputempwidgettimer:start()
 -- --   cpufreqwidget:set_markup(cpufreqstr())
 -- end)
 -- 
+--}}}
+--{{{ Cpu usage widget
+-- local cpuwidget = awful.widget.graph()
+-- cpuwidget:set_width(50)
+-- cpuwidget:set_height(20)
+-- --cpuwidget:set_border_color(beautiful.border_focus)
+-- cpuwidget:set_background_color(beautiful.bg_systray)
+-- cpuwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 0, 20}, stops = { {0, "#FF0000"}, { 20, "#00FF00" } } })
+-- local cpuloadtooltip = awful.tooltip({
+--   objects = {cpuwidget},
+--   --shape = gears.shape.infobubble,
+--   timer_function = function()
+--     return from_command('cut -z -f-3 -d" " /proc/loadavg')
+--   end,      
+--   timeout = 10,   
+-- })
+-- local cpuwidgettimer = gears.timer({  timeout = 1,
+--                                       autostart = true,
+--                                       callback = function()
+--                                         awful.spawn.easy_async("sh -c 'cat /proc/loadavg | cut -z -d\" \" -f1'", function(stdout, stderr, reason, exit_code)
+--                                           naughty.notify({ text = stdout })
+--                                           cpuwidget:add_value(tonumber(stdout))
+--                                         end)
+--                                       end
+--                                   })
+-- -- Register widget  
+-- vicious.register(cpuwidget, vicious.widgets.cpu, "$1")
+--}}}
 -- --}}}
--- --{{{ Cpu usage widget
--- -- local cpuwidget = awful.widget.graph()
--- -- cpuwidget:set_width(50)
--- -- cpuwidget:set_height(20)
--- -- --cpuwidget:set_border_color(beautiful.border_focus)
--- -- cpuwidget:set_background_color(beautiful.bg_systray)
--- -- cpuwidget:set_color({ type = "linear", from = { 0, 0 }, to = { 0, 20}, stops = { {0, "#FF0000"}, { 20, "#00FF00" } } })
--- -- local cpuloadtooltip = awful.tooltip({
--- --   objects = {cpuwidget},
--- --   --shape = gears.shape.infobubble,
--- --   timer_function = function()
--- --     return from_command('cut -z -f-3 -d" " /proc/loadavg')
--- --   end,      
--- --   timeout = 10,   
--- -- })
--- -- local cpuwidgettimer = gears.timer({  timeout = 1,
--- --                                       autostart = true,
--- --                                       callback = function()
--- --                                         awful.spawn.easy_async("sh -c 'cat /proc/loadavg | cut -z -d\" \" -f1'", function(stdout, stderr, reason, exit_code)
--- --                                           naughty.notify({ text = stdout })
--- --                                           cpuwidget:add_value(tonumber(stdout))
--- --                                         end)
--- --                                       end
--- --                                   })
--- -- -- Register widget  
--- -- vicious.register(cpuwidget, vicious.widgets.cpu, "$1")
--- --}}}
--- --}}}
+-- {{{ Network speed widget
+-- local updownwidget = wibox.widget.textbox()
+-- local networktimer = gears.timer({ timeout = 1 })
+-- local networkprevvalue = 0
+-- networktimer:connect_signal("timeout", function()
+--     local request = file_read("/proc/net/dev")
+--     request:connect_signal("request::completed", function(content)
+-- --         naughty.notify({ text = 'network' })
+--         if content then
+--           local match = string.match(content,"wlp3s0:%s*(%d+)")
+--           updownwidget:set_markup(tostring(round((tonumber(match)-networkprevvalue)/1024,1)) .. " kB/s")
+--           networkprevvalue = tonumber(match)
+--         end
+--       end)
+--   end)
+-- networktimer:emit_signal("timeout")
+-- networktimer:start()
+-- }}}
 --{{{ Battery widget
 --{{{ Battery variables init
 local batteryupdatetimer = gears.timer({ timeout = 15 })
@@ -569,7 +588,7 @@ local batterytext = wibox.widget{
 --   font = "Hack 5",
 }
 
-lowbattlevel = {}
+local lowbattlevel = {}
 -- lowbattlevel[4] = function()            
 --   --no battery so power off system before power cuts off
 --   os.execute("systemctl poweroff")
@@ -616,7 +635,7 @@ batteryupdatetimer:connect_signal("battery::charge_changed", function(parent_obj
 --       naughty.notify({ text = "i: " .. i })
       if lowbattlevel[i] then   
         if type(lowbattlevel[i]) ~= "function" then
-          naughty.notify({    
+          naughty.notify({
           preset = naughty.config.presets.critical,
           title = "Battery",
           text = "Battery level low " .. tostring(charge) .. "%"
@@ -792,10 +811,10 @@ local updatertooltip = awful.tooltip({
 --}}}  
 
 --{{{ Widget separator
-widgetseparator = wibox.widget.textbox()
+local widgetseparator = wibox.widget.textbox()
 widgetseparator:set_markup(" | ")
 
-widgetspacer = wibox.widget.textbox()
+local widgetspacer = wibox.widget.textbox()
 widgetspacer:set_markup(" ")
 --}}}
 
@@ -906,16 +925,17 @@ awful.screen.connect_for_each_screen(function(s)
 --       widgetseparator,
 --       gmailwidget,
 --       widgetseparator,
---       widgetspacer,
-      cputempwidget,
+--       cputempwidget,
 --       widgetseparator,
 --       brightnesswidget,
 --       widgetseparator,
 --       volumewidget,
 --       widgetseparator,
 --       cpufreqwidget,
-      widgetspacer,
 -- --       cpuwidget,
+--       widgetseparator,
+--       updownwidget,
+      widgetspacer,
       batterywidget,
       vocabwidget,
       musicwidget,
@@ -939,7 +959,7 @@ end)
 -- }}}
 
 -- {{{ Key bindings
-globalkeys = gears.table.join(
+local globalkeys = gears.table.join(
   awful.key({ modkey,       }, "s",    hotkeys_popup.show_help,
         {description="show help", group="awesome"}),
   --awful.key({ modkey,       }, "Left",   awful.tag.viewprev,
@@ -1047,8 +1067,8 @@ globalkeys = gears.table.join(
   awful.key({           }, "XF86TouchpadToggle", function () awful.util.spawn_with_shell("touchpad_toggle") end),
   awful.key({ modkey,       }, "F2" , function ()
     --awful.util.spawn("i3lock-fancy -- scrot")
---     awful.util.spawn_with_shell("xset s activate")
-    awful.spawn("light-locker-command -l")
+    awful.util.spawn_with_shell("xset s activate")
+--     awful.spawn("light-locker-command -l")
 --     awful.util.spawn_with_shell("dbus-send --type=method_call --dest=org.gnome.ScreenSaver /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock")
   end),
   --awful.key({ modkey,       }, "F2" , function () awful.util.spawn_with_shell("i3lock-fancy -- scrot") end),
@@ -1105,7 +1125,7 @@ globalkeys = gears.table.join(
 --   end)
 )
 
-clientkeys = gears.table.join(
+local clientkeys = gears.table.join(
   awful.key({ modkey,       }, "f",
     function (c)
       c.fullscreen = not c.fullscreen
@@ -1204,7 +1224,7 @@ for i = 1, 9 do
   )
 end
 
-clientbuttons = gears.table.join(
+local clientbuttons = gears.table.join(
   awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
   awful.button({ modkey }, 1, awful.mouse.client.move),
   awful.button({ modkey }, 3, awful.mouse.client.resize))
@@ -1248,7 +1268,8 @@ awful.rules.rules = {
       "pinentry",
       "veromix",
       "xtightvncviewer",
-      "gimp"},
+      "gimp",
+      "/usr/lib/firefox/plugin-container" },
 
     name = {
       "Event Tester",  -- xev.
@@ -1264,15 +1285,10 @@ awful.rules.rules = {
   { rule_any = {type = { "normal", "dialog" }
     }, properties = { titlebars_enabled = false }
   },
-  { rule_any = { class = { "mpv" }
-  }, properties = { border_width = 0 } },
-  { rule_any = { class = { "/usr/lib/firefox/plugin-container" }
-  }, properties = { floating = true } },
-  { rule_any = { class = { "geary", "Geary" }
-  }, properties = { tag = "Emails" } },
-  -- Set Firefox to always map on the tag named "2" on screen 1.
---   { rule = { class = "Firefox" },
---     properties = { tag = mouse.screen.selected_tag } },
+--   { rule_any = { class = { "mpv" }
+--   }, properties = { border_width = 0 } },
+--   { rule_any = { class = { "geary", "Geary" }
+--   }, properties = { tag = "Emails" } },
 }
 -- }}}
 
@@ -1358,23 +1374,24 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 --{{{ Daemons and programs startup
 -- awful.spawn("gnome-session")
+awful.spawn("run-once compton")
 awful.spawn("fcitx")
 -- awful.spawn("run-once xss-lock -- i3lock-fancy -f /usr/share/fonts/TTF/AURORABC.TTF")
-awful.spawn("run-once light-locker")
+-- awful.spawn("run-once light-locker")
 -- awful.spawn("run-once redshift-gtk")
 awful.spawn("run-once volumeicon")
-awful.spawn("blueman-applet")
--- awful.util.spawn("run-once xss-lock -- i3lock -n -i /home/vitis/.lock.png")
+-- awful.spawn("blueman-applet")
+awful.util.spawn("run-once xss-lock -- i3lock-fancy")
 -- awful.util.spawn("run-once i3lock-fancy -- scrot")
 awful.spawn("run-once nm-applet")
 -- awful.spawn("run-once connman-gtk")
 -- awful.util.spawn("ibus-daemon -xrd")
 awful.spawn("run-once pcmanfm -d")
 awful.spawn("libinput-gestures-setup start")
+-- awful.spawn("skypeforlinux")
 -- awful.util.spawn("telegram-desktop")
 -- awful.util.spawn("skypeforlinux")
 -- awful.spawn("geary")
 -- awful.util.spawn_with_shell("run-once ~/.config/i3/gmail.sh")
-awful.spawn("run-once compton")
 -- awful.spawn("xcompmgr")
 --}}}

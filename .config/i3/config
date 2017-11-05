@@ -17,7 +17,7 @@ set $terminal termite
 #font pango:sans 7
 #font pango:Inconsolata 8
 #font pango:ProFont 8
-font pango:Misc Ohsnap, Regular 8
+font pango:Misc Ohsnap, Regular 7
 #font pango:monospace 8
 #font pango:Saved By Zero Regular 8 
 #font pango:Metal Lord 11
@@ -52,8 +52,8 @@ bindsym --whole-window $mod+button8 kill
 #bindsym mod1+F3 exec dmenu_run
 #bindsym mod1+p exec dmenu_run
 bindsym mod1+p exec i3-dmenu-desktop
-bindsym $mod+F2 exec xset s activate  
-# bindsym $mod+F2 exec light-locker-command -l
+# bindsym $mod+F2 exec xset s activate  
+bindsym $mod+F2 exec light-locker-command -l
 #bindsym mod1+F2 exec pkill compton && notify-send "Compositing" "Turned off" || (compton --force-win-blend && echo "Compositing" "Turned on")
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
@@ -84,7 +84,7 @@ bindsym control+KP_Subtract exec amixer set Master 5%- unmute
 bindsym control+Print exec scrot -u -e 'mv $f ~/Pictures/Screenshots/'
 bindsym Print exec scrot -e 'mv $f ~/Pictures/Screenshots/'
 
-bindsym $mod+w exec chromium
+bindsym $mod+w exec firefox
 #bindsym $mod+e exec leafpad
 #bindsym $mod+f exec pcmanfm
 bindsym $mod+Shift+f exec $terminal -e ranger
@@ -270,12 +270,16 @@ bar {
 
 	#font 
 	colors {
-		background #2F343F
+		background #444444
+		#background #2F343F
 		#background #121212
         #statusline #FFDDDD
-        statusline #BAC3CF
-        binding_mode #5294E2 #5294E2 #0F0F0F
-        focused_workspace #2F343F #5294E2 #0F0F0F
+        #statusline #BAC3CF
+        statusline #F0544C
+        #binding_mode #5294E2 #5294E2 #0F0F0F
+        binding_mode #F0544C #F0544C #0F0F0F
+        #focused_workspace #2F343F #5294E2 #0F0F0F
+        focused_workspace #F0544C #F0544C #0F0F0F
 	}
 }
 
@@ -316,8 +320,13 @@ bindsym $mod+Shift+q mode $lockModeName
 # set $purple            #AE81FF
 
 # class                 border  backgr. text    indicator
-client.focused           #5294E2 #5294E2 #f0f0f0 #2e9ef4
+# Numix
+client.focused           #F0544C #F0544C #f0f0f0 #2e9ef4
+# Arc
+#client.focused           #5294E2 #5294E2 #f0f0f0 #2e9ef4
+#client.focused           #5294E2 #5294E2 #f0f0f0 #2e9ef4
 client.unfocused         #2f343f #2f343f #888888 #292d2e
+#client.unfocused         #2f343f #2f343f #888888 #292d2e
 #client.focused          #370943 #370943 #ffffff #2e9ef4
 #client.focused           #84255D #84255D #ffffff #2e9ef4
 #client.focused          #ff0000 #ff0000 #ffffff #2e9ef4
@@ -356,24 +365,24 @@ for_window [class="gimp"] floating enable
 #exec export GTK_IM_MODULE="ibus"
 #exec export QT_IM_MODULE="ibus"
 
-# exec --no-startup-id nm-applet
-exec --no-startup-id connman-gtk
-#exec ibus-daemon -drx
-#exec pcmanfm -d
+exec --no-startup-id nm-applet
+# exec --no-startup-id connman-gtk
+# exec ibus-daemon -drx
+exec pcmanfm -d
 exec --no-startup-id fcitx
 # exec --no-startup-id redshift-gtk
 exec --no-startup-id volumeicon
-exec --no-startup-id cbatticon -r 5 -c "systemctl poweroff"
-# exec --no-startup-id compton
-exec xss-lock -- i3lock -n -i /home/vitis/.lock.png
-# exec --no-startup-id xss-lock -- i3lock-fancy -f /usr/share/fonts/TTF/AURORABC.TTF
+# exec --no-startup-id cbatticon -r 5 -c "systemctl poweroff"
+exec --no-startup-id compton
+# exec xss-lock -- i3lock -n -i /home/vitis/.lock.png
+exec --no-startup-id xss-lock -- i3lock-fancy -f /usr/share/fonts/TTF/AURORABC.TTF
 # exec light-locker
 exec --no-startup-id libinput-gestures-setup start
 exec --no-startup-id nitrogen --restore
-exec sh ~/.config/i3/gmail.sh
+# exec sh ~/.config/i3/gmail.sh
 # exec geary
 exec telegram-desktop -startintray
-exec --no-startup-id skypeforlinux
+exec skypeforlinux
 # exec LC_ALL=C parcellite
 # exec checkgmail
 # exec sleep 3 && xsetroot -cursor_name left_ptr&
