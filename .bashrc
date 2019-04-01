@@ -33,6 +33,14 @@ test -r ~/.dircolors && eval "$(dircolors ~/.dircolors)"
 set -o vi
 
 source "/usr/share/git/completion/git-prompt.sh"
-export PS1='\[\033[34m\]┌─\[\e[0m\][\u@\h][\w][$(__git_ps1 "(%s)")]\n\[\033[34m\]└─◼ \[\e[0m\]'
+export PS1='\[\033[34m\]┌─\[\e[0m\][\u@\h][\w][$(date +%r)]$(__git_ps1 "[(%s)]")\n\[\033[34m\]└─◼ \[\e[0m\]'
+
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+        source /etc/profile.d/vte.sh
+fi
 
 #trap 'echo -ne "\e[0m"' DEBUG
+export http_proxy=''
+export https_proxy=''
+export ftp_proxy=''
+export socks_proxy=''

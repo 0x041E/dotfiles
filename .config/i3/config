@@ -10,14 +10,14 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
-set $terminal termite
-#set $terminal urxvt
+#set $terminal termite
+set $terminal urxvt
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 #font pango:sans 7
-#font pango:Inconsolata 8
+font pango:Inconsolata 8
 #font pango:ProFont 8
-font pango:Misc Ohsnap, Regular 7
+#font pango:Misc Ohsnap, Regular 7
 #font pango:monospace 8
 #font pango:Saved By Zero Regular 8 
 #font pango:Metal Lord 11
@@ -51,7 +51,8 @@ bindsym --whole-window $mod+button8 kill
 #bindsym $mod+d exec dmenu_run
 #bindsym mod1+F3 exec dmenu_run
 #bindsym mod1+p exec dmenu_run
-bindsym mod1+p exec i3-dmenu-desktop
+# bindsym mod1+p exec i3-dmenu-desktop
+bindsym mod1+p exec rofi -show run
 # bindsym $mod+F2 exec xset s activate  
 bindsym $mod+F2 exec light-locker-command -l
 #bindsym mod1+F2 exec pkill compton && notify-send "Compositing" "Turned off" || (compton --force-win-blend && echo "Compositing" "Turned on")
@@ -365,24 +366,26 @@ for_window [class="gimp"] floating enable
 #exec export GTK_IM_MODULE="ibus"
 #exec export QT_IM_MODULE="ibus"
 
+exec --no-startup-id autorandr -c
 exec --no-startup-id nm-applet
 # exec --no-startup-id connman-gtk
-# exec ibus-daemon -drx
+# exec --no-startup-id ibus-daemon -drx
 exec pcmanfm -d
 exec --no-startup-id fcitx
 # exec --no-startup-id redshift-gtk
 exec --no-startup-id volumeicon
 # exec --no-startup-id cbatticon -r 5 -c "systemctl poweroff"
+# exec --no-startup-id autorandr -c
 exec --no-startup-id compton
 # exec xss-lock -- i3lock -n -i /home/vitis/.lock.png
-exec --no-startup-id xss-lock -- i3lock-fancy -f /usr/share/fonts/TTF/AURORABC.TTF
-# exec light-locker
+# exec --no-startup-id xss-lock -- i3lock-fancy -f /usr/share/fonts/TTF/AURORABC.TTF
+exec light-locker
 exec --no-startup-id libinput-gestures-setup start
 exec --no-startup-id nitrogen --restore
 # exec sh ~/.config/i3/gmail.sh
 # exec geary
-exec telegram-desktop -startintray
-exec skypeforlinux
+# exec telegram-desktop -startintray
+# exec skypeforlinux
 # exec LC_ALL=C parcellite
 # exec checkgmail
 # exec sleep 3 && xsetroot -cursor_name left_ptr&

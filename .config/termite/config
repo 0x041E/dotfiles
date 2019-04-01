@@ -1,0 +1,330 @@
+[options]
+scroll_on_output = false
+scroll_on_keystroke = true
+audible_bell = false
+mouse_autohide = false
+allow_bold = true
+dynamic_title = true
+urgent_on_bell = true
+clickable_url = true
+#font = Hack 7
+#font = Misc Ohsnap 8
+#font = Inconsolata 8
+font = ProFont 8
+scrollback_lines = 10000
+search_wrap = true
+icon_name = terminal
+#geometry = 640x480
+
+# "system", "on" or "off"
+cursor_blink = off
+
+# "block", "underline" or "ibeam"
+cursor_shape = block
+
+# $BROWSER is used by default if set, with xdg-open as a fallback
+# browser = xdg-open
+
+# set size hints for the window
+size_hints = false
+
+# Hide links that are no longer valid in url select overlay mode
+filter_unmatched_urls = true
+
+# emit escape sequences for extra modified keys
+#modify_other_keys = false
+
+# [colors]
+# cursor = #dcdccc
+# foreground = #dcdccc
+# foreground_bold = #ffffff
+# background = #3f3f3f
+# background = #2F343F
+# background = #111111
+
+# 20% background transparency (requires a compositor)
+# #5294E2 #2F343F
+# background = rgba(47, 52, 63, 0.9)
+# background = rgba(0, 0, 0, 0.75)
+
+# if unset, will reverse foreground and background
+# highlight = #2f2f2f
+
+# colors from color0 to color254 can be set
+# color0 = #3f3f3f
+# color1 = #705050
+# color2 = #60b48a
+# color3 = #dfaf8f
+# color4 = #506070
+# color5 = #dc8cc3
+# color6 = #8cd0d3
+# color7 = #dcdccc
+# color8 = #709080
+# color9 = #dca3a3
+# color10 = #c3bf9f
+# color11 = #f0dfaf
+# color12 = #94bff3
+# color13 = #ec93d3
+# color14 = #93e0e3
+# color15 = #ffffff
+
+# color0 = #181818
+# color8 = #181818
+# color1 = #4D4D4D
+# color9 = #D4D4D4
+# color2 = #AADB0F
+# color10 = #AADB0F
+# color3 = #666666
+# color11 = #666666
+# color4 = #FFFFFF
+# color12 = #FFFFFF
+# color5 = #91BA0D
+# color13 = #91BA0D
+# color6 = #6D6D6D
+# color14 = #D6D6D6
+# color7 = #9D9D9D
+# color15 = #D9D9D9
+
+# color0=#3d352a
+# color1=#cd5c5c
+# color2=#86af80
+# color3=#ffd700
+# color4=#6495ed
+# color5=#deb887
+# color6=#b0c4de
+# color7=#bbaa99
+# color8=#554444
+# color9=#cc5533
+# color10=#88aa22
+# color11=#ffd700
+# color12=#87ceeb
+# color13=#996600
+# color14=#b0c4de
+# color15=#ddccbb
+
+# #special
+# foreground=   #c5c8c6
+# #background=   #1d1f21
+# cursorColor=  #c5c8c6
+# 
+# #black
+# color0=       #282a2e
+# color8=       #373b41
+# 
+# #red
+# color1=       #a54242
+# color9=       #cc6666
+# 
+# #green
+# color2=       #8c9440
+# color10=      #b5bd68
+# 
+# #yellow
+# color3=       #de935f
+# color11=      #f0c674
+# 
+# #blue
+# color4=       #5f819d
+# color12=      #81a2be
+# 
+# #magenta
+# color5=       #85678f
+# color13=      #b294bb
+# 
+# #cyan
+# color6=       #5e8d87
+# color14=      #8abeb7
+# 
+# #white
+# color7=       #707880
+# color15=      #c5c8c6
+
+################################################################################
+
+# special
+#[colors]
+#foreground = #b5e7e0
+##background = #020404
+##background = rgba(2, 4, 4, 0.9)
+#background = rgba(2, 4, 4, 0.7)
+#cursorColor = #b5e7e0
+#
+## black
+#color0 = #050808
+#color8 = #dab463
+#
+## red
+#color1 = #0f1615
+#color9 = #669b55
+#
+## green
+#color2 = #1e2927
+#color10 = #d991e5
+#
+## yellow
+#color3 = #324240
+#color11 = #4da198
+#
+## blue
+#color4 = #4c6360
+#color12 = #c9a350
+#
+## magenta
+#color5 = #6b8a86
+#color13 = #69aca5
+#
+## cyan
+#color6 = #90b8b3
+#color14 = #65b9b0
+#
+## white
+#color7 = #baece6
+#color15 = #579fd6
+
+#[hints]
+#font = Monospace 12
+#foreground = #dcdccc
+#background = #3f3f3f
+#active_foreground = #e68080
+#active_background = #3f3f3f
+#padding = 2
+#border = #3f3f3f
+#border_width = 0.5
+#roundness = 2.0
+
+################################################################################
+
+#[colors]
+#foreground=#88877C
+##background=#1D1E1D
+#background=rgba(29,31,29,0.9)
+#color0=#252525
+#color8=#383838
+#color1=#b4543f
+#color9=#d38773
+#color2=#7d8941
+#color10=#b0a974
+#color3=#b2893f
+#color11=#d2a973
+#color4=#7e5276
+#color12=#b18695
+#color5=#b45274
+#color13=#d38694
+#color6=#7d8876
+#color14=#b0a795
+#color7=#A89B8A
+#color15=#BAA48A
+
+################################################################################
+
+#[colors]
+#
+## special
+#foreground      = #c7ccd1
+#foreground_bold = #c7ccd1
+#cursor          = #c7ccd1
+#background      = #1c2023
+#
+## black
+#color0  = #1c2023
+#color8  = #747c84
+#
+## red
+#color1  = #c7ae95
+#color9  = #c7ae95
+#
+## green
+#color2  = #95c7ae
+#color10 = #95c7ae
+#
+## yellow
+#color3  = #aec795
+#color11 = #aec795
+#
+## blue
+#color4  = #ae95c7
+#color12 = #ae95c7
+#
+## magenta
+#color5  = #c795ae
+#color13 = #c795ae
+#
+## cyan
+#color6  = #95aec7
+#color14 = #95aec7
+#
+## white
+#color7  = #c7ccd1
+#color15 = #f3f4f5
+
+################################################################################
+
+#[colors]
+#
+## special
+#foreground      = #b7b8b9
+#foreground_bold = #b7b8b9
+##cursor          = #b7b8b9
+#background      = #0c0d0e
+#
+## black
+#color0  = #0c0d0e
+#color8  = #737475
+#
+## red
+#color1  = #e31a1c
+#color9  = #e31a1c
+#
+## green
+#color2  = #31a354
+#color10 = #31a354
+#
+## yellow
+#color3  = #dca060
+#color11 = #dca060
+#
+## blue
+#color4  = #3182bd
+#color12 = #3182bd
+#
+## magenta
+#color5  = #756bb1
+#color13 = #756bb1
+#
+## cyan
+#color6  = #80b1d3
+#color14 = #80b1d3
+#
+## white
+#color7  = #b7b8b9
+#color15 = #fcfdfe
+################################################################################
+[colors]
+foreground = #D3D3D3
+background = #111111
+#black
+color0 = #181818
+color8 = #181818
+#red
+color1 = #4D4D4D
+color9 = #D4D4D4
+#green
+color2 = #AADB0F
+color10 = #AADB0F
+#yellow
+color3 = #666666
+color11 = #666666
+#blue
+color4 = #FFFFFF
+color12 = #FFFFFF
+#magenta
+color5 = #91BA0D
+color13 = #91BA0D
+#cyan
+color6 = #6D6D6D
+color14 = #D6D6D6
+#white
+color7 = #9D9D9D
+color15 = #D9D9D9
+
+# vim = ft=dosini cms=#%s

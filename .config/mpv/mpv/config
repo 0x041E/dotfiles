@@ -1,0 +1,13 @@
+[default]
+vo=opengl
+hwdec=vaapi
+hwdec-codecs=all
+sub-font-size=30
+save-position-on-quit
+screenshot-format=png
+
+[vo.vaapi]
+hwdec=vaapi
+
+[vo.vdpau]
+hwdec=vdpau
